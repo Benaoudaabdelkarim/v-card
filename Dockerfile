@@ -1,7 +1,7 @@
 FROM php:8.2-fpm
 ARG user
 ARG uid
-RUN apt update && apt install -y && curl -fsSL https://deb.nodesource.com/setup_14.21.3 | sudo -E bash - \
+RUN apt update && apt install -y \
     git \
     curl \
     libpng-dev \
@@ -15,13 +15,19 @@ RUN apt update && apt install -y && curl -fsSL https://deb.nodesource.com/setup_
     iputils-ping \
     iproute2 \
     cron \
-    python3 \
-    python3-fitz \
-    nodejs \
-    npm
+    gnupg \
+    ca-certificates
+
+# Add Source for Node.js v14
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt install -y nodejs
 
 RUN apt clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
 RUN docker-php-ext-install zip pdo_mysql mbstring exif pcntl bcmath gd intl
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Create the log file to be able to run tail
