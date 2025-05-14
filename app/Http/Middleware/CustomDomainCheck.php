@@ -17,6 +17,8 @@ class CustomDomainCheck
      */
     public function handle(Request $request, Closure $next)
     {
+        return $next($request);
+        
         $domain = request()->getHttpHost();
         $appDomain = !empty(config('app.domain')) ? config('app.domain') : parse_url(config('app.url'), PHP_URL_HOST);
         $requestAlias = request()->getRequestUri();

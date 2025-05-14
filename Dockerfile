@@ -1,7 +1,7 @@
 FROM php:8.2-fpm
 ARG user
 ARG uid
-RUN apt update && apt install -y \
+RUN apt update && apt install -y && curl -fsSL https://deb.nodesource.com/setup_14.21.3 | sudo -E bash - \
     git \
     curl \
     libpng-dev \

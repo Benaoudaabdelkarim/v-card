@@ -17,6 +17,8 @@ class FreshInstall
      */
     public function handle(Request $request, Closure $next): Response
     {
+        return $next($request);
+
         if (!$this->alreadyInstalled()) {
             try {
                 DB::connection()->getPdo();
