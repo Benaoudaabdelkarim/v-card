@@ -1,0 +1,48 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: vcard
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: v-card
+    container_name: v-card
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - vcard
+    cap_add:
+      - NET_ADMIN
+  db:
+    image: mysql:8.0
+    container_name: vcard-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./docker-compose/mysql:/var/lib/mysql
+    networks:
+      - vcard
+  nginx:
+    image: nginx:alpine
+    container_name: vcard-server
+    restart: unless-stopped
+    ports:
+      - 9000:80
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - vcard
+networks:
+  vcard:
+    driver: bridge
